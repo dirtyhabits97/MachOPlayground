@@ -6,6 +6,8 @@
 #include <mach-o/loader.h>
 #include <mach-o/swap.h>
 
+#include "source/segment_64.h"
+
 void dump_segments(FILE *obj_file);
 
 int main(int argc, char *argv[]) {
@@ -69,7 +71,8 @@ void dump_segment_commands(
         swap_segment_command_64(segment, 0);
       }
 
-      printf("segname: %s\n", segment->segname);
+      parse_segment(segment);
+      // printf("segname: %s\n", segment->segname);
       free(segment);
     } else if (cmd->cmd == LC_SEGMENT) {
       struct segment_command *segment = load_bytes(

@@ -5,7 +5,7 @@ OUTPUT = dump
 default: build
 
 build:
-	$(CC) dump.c -o $(OUTPUT)
+	$(CC) source/*.c dump.c -o $(OUTPUT)
 
 clean:
 	$(RM) $(OUTPUT)
