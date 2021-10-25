@@ -1,5 +1,6 @@
 #include "segment_64.h"
 
+#include <mach-o/loader.h>
 #include <mach/vm_prot.h>
 #include <stdio.h>
 #include <string.h>
@@ -48,4 +49,13 @@ void parse_segment(struct segment_command_64 *seg_cmd) {
     // protection: NONE, READ, WRITE, EXECUTION
     seg_cmd->initprot, seg_cmd->maxprot, formatted_protection
   );
+
+  // section_64 is immediately after segment_command_64.
+  void *sectionOffset = (void*)seg_cmd + sizeof(struct segment_command_64);
+
+  for (int section = 0; section < seg_cmd->nsects; ++section) {
+    int offset = sizeof(struct section_64) * section;
+    struct section_64 *sect = sectionOffset + offset;
+    printf("(%s,%s)\n", sect->segname, sect->sectname);
+  }
 }
