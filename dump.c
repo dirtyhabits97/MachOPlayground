@@ -118,9 +118,9 @@ static const char *cpu_type_name(cpu_type_t cpu_type) {
 }
 
 void dump_mach_header(
-  FILE *obj_file, 
-  int offset, 
-  int is_64, 
+  FILE *obj_file,
+  int offset,
+  int is_64,
   int is_swap
 ) {
   uint32_t ncmds;
