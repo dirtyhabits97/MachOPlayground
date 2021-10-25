@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 
-void formatted_protection(vm_prot_t mask, char * protection) {
+static void format_protection(vm_prot_t mask, char * protection) {
   if (mask == VM_PROT_NONE) {
     strcat(protection, "NONE");
     return;
@@ -26,26 +26,26 @@ void formatted_protection(vm_prot_t mask, char * protection) {
   }
 }
 
-void parse_segment(struct segment_command_64 *segment) {
+void parse_segment(struct segment_command_64 *seg_cmd) {
   char formatted_file_size[16];
   char formatted_memory_size[16];
-  char formatted_protection_str[20] = {'\0'};
+  char formatted_protection[20] = {'\0'};
 
-  sprintf(formatted_file_size, "(%lld)", segment->filesize);
-  sprintf(formatted_memory_size, "(%lld)", segment->vmsize);
-  formatted_protection(segment->initprot, formatted_protection_str);
+  sprintf(formatted_file_size, "(%lld)", seg_cmd->filesize);
+  sprintf(formatted_memory_size, "(%lld)", seg_cmd->vmsize);
+  format_protection(seg_cmd->initprot, formatted_protection);
 
   printf(
     "%-20s nsects: %-4d cmdsize: %-6d segname: %-16s file:0x%08llx-0x%08llx %-11s vm: 0x%09llx-0x%09llx %-12s protection: %d/%d (%s)\n",
     "LC_SEGMENT_64",
-    segment->nsects,
-    segment->cmdsize,
-    segment->segname,
+    seg_cmd->nsects,
+    seg_cmd->cmdsize,
+    seg_cmd->segname,
     // file data
-    segment->fileoff, segment->fileoff + segment->filesize, formatted_file_size,
+    seg_cmd->fileoff, seg_cmd->fileoff + seg_cmd->filesize, formatted_file_size,
     // memory data
-    segment->vmaddr, segment->vmaddr + segment->vmsize, formatted_memory_size,
+    seg_cmd->vmaddr, seg_cmd->vmaddr + seg_cmd->vmsize, formatted_memory_size,
     // protection: NONE, READ, WRITE, EXECUTION
-    segment->initprot, segment->maxprot, formatted_protection_str
+    seg_cmd->initprot, seg_cmd->maxprot, formatted_protection
   );
 }
