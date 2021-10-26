@@ -1,5 +1,6 @@
 #include <mach-o/loader.h>
 #include <mach/vm_prot.h>
+#include <stdint.h>
 #include <string.h>
 
 #include "segment_64.h"
@@ -27,8 +28,47 @@ static void format_protection(vm_prot_t mask, char * protection) {
   }
 }
 
-void parse_section(struct section_64 *section) {
-  printf("(%s,%s)\n", section->segname, section->sectname);
+static void format_section_type(uint8_t type, char *out) {
+  if (type == S_REGULAR) {
+    strcpy(out, "S_REGULAR");
+  } else if (type == S_ZEROFILL) {
+    strcpy(out, "S_ZEROFILL");
+  } else if (type == S_CSTRING_LITERALS) {
+    strcpy(out, "S_CSTRING_LITERALS");
+  } else if (type == S_4BYTE_LITERALS) {
+    strcpy(out, "S_4BYTE_LITERALS");
+  } else if (type == S_8BYTE_LITERALS) {
+    strcpy(out, "S_8BYTE_LITERALS");
+  } else if (type == S_LITERAL_POINTERS) {
+    strcpy(out, "S_LITERAL_POINTERS");
+  } else if (type == S_NON_LAZY_SYMBOL_POINTERS) {
+    strcpy(out, "S_NON_LAZY_SYMBOL_POINTERS");
+  } else if (type == S_LAZY_SYMBOL_POINTERS) {
+    strcpy(out, "S_LAZY_SYMBOL_POINTERS");
+  } else if (type == S_LITERAL_POINTERS) {
+    strcpy(out, "S_LITERAL_POINTERS");
+  } else if (type == S_SYMBOL_STUBS) {
+    strcpy(out, "S_SYMBOL_STUBS");
+  } else if (type == S_MOD_INIT_FUNC_POINTERS) {
+    strcpy(out, "S_MOD_INIT_FUNC_POINTERS");
+  } else if (type == S_THREAD_LOCAL_ZEROFILL) {
+    strcpy(out, "S_THREAD_LOCAL_ZEROFILL");
+  } else if (type == S_THREAD_LOCAL_VARIABLES) {
+    strcpy(out, "S_THREAD_LOCAL_VARIABLES");
+  }else {
+    sprintf(out, "OTHER(0x%x)", type);
+  }
+}
+
+void parse_section(struct section_64 section) {
+  char formatted_type[32];
+  char formatted_seg_sec[64];
+  char formatted_size[16];
+
+  const uint8_t type = section.flags & SECTION_TYPE;
+
+  format_section_type(type, formatted_type);
+  printf("(%s,%s) type: %s\n", section.segname, section.sectname, formatted_type);
 }
 
 void parse_segment(
@@ -63,11 +103,10 @@ void parse_segment(
   for (int section = 0; section < seg_cmd->nsects; ++section) {
     int offset = sizeof(struct section_64) * section;
     struct section_64 *sect = load_bytes(
-      obj_file, 
-      // TODO: Fix this conversion
-      (int)sectionOffset + offset, 
+      obj_file,
+      (long)sectionOffset + offset,
       sizeof(struct section_64)
     );
-    parse_section(sect);
+    parse_section(*sect);
   }
 }
