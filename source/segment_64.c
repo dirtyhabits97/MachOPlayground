@@ -1,6 +1,7 @@
 #include <mach-o/loader.h>
 #include <mach/vm_prot.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "segment_64.h"
@@ -62,13 +63,22 @@ static void format_section_type(uint8_t type, char *out) {
 
 void parse_section(struct section_64 section) {
   char formatted_type[32];
-  char formatted_seg_sec[64];
   char formatted_size[16];
+  char formatted_seg_sec[64];
 
   const uint8_t type = section.flags & SECTION_TYPE;
 
   format_section_type(type, formatted_type);
-  printf("(%s,%s) type: %s\n", section.segname, section.sectname, formatted_type);
+  sprintf(formatted_size, "(%lld)", section.size);
+  sprintf(formatted_seg_sec, "(%s, %s)", section.segname, section.sectname);
+
+  printf(
+    "    0x%9llx-0x%9llx %-11s %-34s type: %s\n", 
+    section.addr, section.addr + section.size,
+    formatted_size,
+    formatted_seg_sec,
+    formatted_type
+  );
 }
 
 void parse_segment(
