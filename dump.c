@@ -65,7 +65,7 @@ void dump_segment_commands(
         swap_segment_command_64(segment, 0);
       }
 
-      parse_segment(segment);
+      parse_segment(segment, obj_file);
       // printf("segname: %s\n", segment->segname);
       free(segment);
     } else if (cmd->cmd == LC_SEGMENT) {
