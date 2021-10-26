@@ -56,7 +56,7 @@ static void format_section_type(uint8_t type, char *out) {
     strcpy(out, "S_THREAD_LOCAL_ZEROFILL");
   } else if (type == S_THREAD_LOCAL_VARIABLES) {
     strcpy(out, "S_THREAD_LOCAL_VARIABLES");
-  }else {
+  } else {
     sprintf(out, "OTHER(0x%x)", type);
   }
 }
@@ -73,7 +73,7 @@ void parse_section(struct section_64 section) {
   sprintf(formatted_seg_sec, "(%s, %s)", section.segname, section.sectname);
 
   printf(
-    "    0x%9llx-0x%9llx %-11s %-34s type: %s\n", 
+    "    0x%9llx-0x%9llx %-11s %-34s type: %s\n",
     section.addr, section.addr + section.size,
     formatted_size,
     formatted_seg_sec,
