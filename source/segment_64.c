@@ -58,4 +58,12 @@ void parse_segment(struct segment_command_64 *seg_cmd) {
     struct section_64 *sect = sectionOffset + offset;
     printf("(%s,%s)\n", sect->segname, sect->sectname);
   }
+
+  // section_64 is immediately after segment_command_64.
+  struct section_64 *sections = (void *)seg_cmd + sizeof(struct segment_command_64);
+
+  for (int i = 0; i < seg_cmd->nsects; ++i) {
+    struct section_64 sect = sections[i];
+    printf("(%s,%s)\n", sect.segname, sect.sectname);
+  }
 }

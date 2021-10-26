@@ -7,6 +7,7 @@
 #include <mach-o/swap.h>
 
 #include "source/segment_64.h"
+#include "source/utils.h"
 
 void dump_segments(FILE *obj_file);
 
@@ -33,13 +34,6 @@ int is_magic_64(uint32_t magic) {
 
 int should_swap_bytes(uint32_t magic) {
   return magic == MH_CIGAM || magic == MH_CIGAM_64;
-}
-
-void *load_bytes(FILE *obj_file, int offset, int size) {
-  void *buf = calloc(1, size);
-  fseek(obj_file, offset, SEEK_SET);
-  fread(buf, size, 1, obj_file);
-  return buf;
 }
 
 void dump_segment_commands(
