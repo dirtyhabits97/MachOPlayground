@@ -112,6 +112,7 @@ void parse_segment(
 
   for (int section = 0; section < seg_cmd->nsects; ++section) {
     int offset = sizeof(struct section_64) * section;
+    // TODO: find a better way to do this.
     struct section_64 *sect = load_bytes(
       obj_file,
       (long)sectionOffset + offset,
